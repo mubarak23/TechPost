@@ -10,9 +10,15 @@ const TechPostSchema = new Schema({
     type: String,
     required: true
   },
-  body: {
+  postbody: {
     type: String,
     required: true
+  },
+  name: {
+    type: String
+  },
+  avatar: {
+    type: String
   },
   likes: [
     {
