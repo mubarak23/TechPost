@@ -18,6 +18,9 @@ const TechUserSchema = new Schema({
   avatar: {
     type: String
   },
+  level: {
+    type: String
+  },
   date: {
     type: Date,
     default: Date.now
