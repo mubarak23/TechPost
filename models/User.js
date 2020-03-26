@@ -27,4 +27,4 @@ const TechUserSchema = new Schema({
   }
 });
 
-module.exports = TechUser = mongoose.model('techuser', TechUserSchema);
+module.exports = TechUser = mongoose.model('techUser', TechUserSchema);
