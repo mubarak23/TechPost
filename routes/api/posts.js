@@ -90,3 +90,5 @@ routes.post('/comment/:id', async (req, res) => {
     return res.status(400).send('Internal Server Error');
   }
 });
+
+module.exports = routes;

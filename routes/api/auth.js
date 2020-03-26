@@ -71,3 +71,5 @@ routes.post(
     }
   }
 );
+
+module.exports = routes;
