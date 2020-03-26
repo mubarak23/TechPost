@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const TechUserSchema = new Schema({
   username: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   email: {
     type: String,
