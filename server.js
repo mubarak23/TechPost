@@ -29,6 +29,7 @@ app.use(function(req, res, next) {
 //defined our route
 app.use('/api/user', require('./routes/api/users'));
 app.use('/api/post', require('./routes/api/posts'));
+app.use('/api/auth', require('./routes/api/auth'));
 
 //serving port
 const PORT = process.env.PORT || 5000;

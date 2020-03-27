@@ -1,23 +1,23 @@
 const express = require('express');
-const routes = express.Router();
+const router = express.Router();
 const { check, validationResult } = require('express-validator/check');
 const Techpost = require('../../models/Post');
 const Techuser = require('../../models/User');
 
 //testing api
-routes.get('/test', function(req, res) {
+router.get('/test', function(req, res) {
   return res.json('This is a simple endpoint');
 });
 
 //@route  Post api/post
 //@description Create post
 //@access private
-routes.post('/', [
+router.post('/', [
   [
     check('title', 'Title is required')
       .not()
       .isEmpty(),
-    check('body', 'post body is needed')
+    check('postbody', 'post body is needed')
       .not()
       .isEmpty()
   ],
@@ -28,7 +28,9 @@ routes.post('/', [
     }
     const { title, postbody } = req.body;
     try {
-      const user = await Techuser.findById(req.user.id).select('-password');
+      const user = await Techuser.findById(req.body.user_id).select(
+        '-password'
+      );
       const newTechpost = new Techpost({
         title,
         postbody,
@@ -49,7 +51,7 @@ routes.post('/', [
 //@access public
 //@created_by mubarak aminu
 
-routes.get('/', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const posts = await Techpost.find().sort({ date: -1 });
     return res.status(200).json(posts);
@@ -62,23 +64,25 @@ routes.get('/', async (req, res) => {
 //@route  GET api/post/:id
 //@description Create post
 //@access public
-routes.get('/:id', async (req, res) => {
-  try {
-    const post = Techpost.findById(req.params.id);
-    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/) || !post) {
-      return res.status(404).json({ message: 'Post not found' });
+router.get('/:id', async (req, res) => {
+    try {
+      const post = await Techpost.findById(req.params.id);
+      if (!post) {
+        return res.status(404).json({
+          message: 'No Post found'
+        });
+      }
+      return res.status(200).json(post);
+    } catch (error) {
+      console.log(error.message);
+      return res.status(500).send('server error');
     }
-    return res.status(200).json(post);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).send('Internal server errror');
-  }
-});
+  });
 
 //@route  GET api/post/:id
 //@description Create post
 //@access public
-routes.post('/comment/:id', async (req, res) => {
+router.post('/comment/:id', async (req, res) => {
   try {
     const { name, user, text } = req.body;
     const post = Techpost.findById(req.params.id);
@@ -96,4 +100,4 @@ routes.post('/comment/:id', async (req, res) => {
   }
 });
 
-module.exports = routes;
+module.exports = router;

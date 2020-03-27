@@ -34,7 +34,7 @@ router.post(
     }
     const { username, email, password, level } = req.body;
     try {
-      let user = await findOne({ email });
+      let user = await TechUser.findOne({ email });
       if (user) {
         return res
           .status(400)
@@ -75,5 +75,15 @@ router.post(
     }
   }
 );
+
+router.get('/', async (req, res) => {
+  try {
+    const users = await TechUser.find().sort({ date: -1 });
+    return res.status(200).json(users);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send('Internal server error');
+  }
+});
 
 module.exports = router;

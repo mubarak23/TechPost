@@ -1,15 +1,21 @@
 const express = require('express');
-const routes = express.Router();
-const { check, validationResult } = require('express-validator');
+const router = express.Router();
+const { check, validationResult } = require('express-validator/check');
 const Techuser = require('../../models/User');
+const auth = require('../../middleware/auth');
 const config = require('config');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
+//testing api
+router.get('/test', function(req, res) {
+  return res.json('This is a Auth endpoint');
+});
+
 // @route    GET api/auth
 // @desc     Get user by token
 // @access   Private
-routes.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const user = await (await Techuser.findById(req.user.id)).isSelected(
       '-password'
@@ -24,7 +30,7 @@ routes.get('/', async (req, res) => {
 // @route    POST api/auth
 // @desc     Authenticate user and get token
 // @access   public
-routes.post(
+router.post(
   '/',
   [
     check('username', 'Username is required')
@@ -39,37 +45,42 @@ routes.post(
     }
     const { username, password } = req.body;
     try {
-      let user = await Techuser.find({ username });
+      let user = await Techuser.findOne({ username });
+
       if (!user) {
         return res
-          .status(404)
-          .json({ errors: [{ message: 'Invaid Credentials' }] });
+          .status(400)
+          .json({ errors: [{ msg: 'Invalid Credentials' }] });
       }
+
       const isMatch = await bcrypt.compare(password, user.password);
+
       if (!isMatch) {
         return res
           .status(400)
-          .json({ errors: [{ message: 'Invaid Credentials' }] });
+          .json({ errors: [{ msg: 'Invalid Credentials' }] });
       }
+
       const payload = {
         user: {
           id: user.id
         }
       };
+
       jwt.sign(
         payload,
         config.get('jwtSecret'),
-        { expiresIn: 36000 },
+        { expiresIn: 360000 },
         (err, token) => {
           if (err) throw err;
           res.json({ token });
         }
       );
-    } catch (error) {
-      console.log(error);
-      res.status(500).send('Internal Server Error');
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send('Server error');
     }
   }
 );
 
-module.exports = routes;
+module.exports = router;
