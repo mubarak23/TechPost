@@ -4,8 +4,13 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const { check, validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator/check');
 const TechUser = require('../../models/User');
+
+//testing api
+router.get('/test', function(req, res) {
+  return res.json('This is a simple endpoint');
+});
 
 //@route post api/users
 //@description Reagister admin
@@ -44,7 +49,8 @@ router.post(
         username,
         email,
         password,
-        level
+        level,
+        avater
       });
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
@@ -56,7 +62,7 @@ router.post(
       };
       jwt.sign(
         payload,
-        config.get('jwtSecrete'),
+        config.get('jwtSecret'),
         { expiresIn: 36000 },
         (err, token) => {
           if (err) throw err;
@@ -69,3 +75,5 @@ router.post(
     }
   }
 );
+
+module.exports = router;

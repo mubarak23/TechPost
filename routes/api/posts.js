@@ -1,8 +1,13 @@
 const express = require('express');
 const routes = express.Router();
-const { check, validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator/check');
 const Techpost = require('../../models/Post');
 const Techuser = require('../../models/User');
+
+//testing api
+routes.get('/test', function(req, res) {
+  return res.json('This is a simple endpoint');
+});
 
 //@route  Post api/post
 //@description Create post
